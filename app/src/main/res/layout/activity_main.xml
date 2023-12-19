@@ -1,24 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:orientation="vertical"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-    
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabLayout"
+
+    <ListView
+        android:id="@+id/musicListView"
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="16dp" />
+
+    <Button
+        android:id="@+id/playPauseButton"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:tabTextColor="@color/colorAccent"
-        app:tabIndicatorFullWidth="false"
-        app:tabIndicatorGravity="bottom"
-        android:background="@color/colorPrimaryDark"/>
+        android:text="Play/Pause"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"/>
 
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/viewPager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <TextView
+        android:id="@+id/songTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:layout_above="@id/playPauseButton"
+        android:layout_marginTop="16dp"
+        android:layout_centerHorizontal="true"/>
 
-</LinearLayout>
+</RelativeLayout>
