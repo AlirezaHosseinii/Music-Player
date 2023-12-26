@@ -3,6 +3,7 @@ package com.example.musicplayer;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -120,7 +121,11 @@ public class MusicListDisplay extends ArrayAdapter<MusicListDisplay.MusicInfo> {
                 playButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        musicPlayer.playMusic(filePaths.get(position));
+                        Intent playIntent = new Intent(context, MusicPlayer.class);
+                        playIntent.setAction("PLAY");
+                        String filePath = filePaths.get(position);
+                        playIntent.putExtra("filePath", filePath);
+                        context.startService(playIntent);
                     }
                 });
 
