@@ -24,24 +24,6 @@
             android:textSize="16sp"
             android:textColor="@android:color/black"
             android:layout_marginRight="16dp"/>
-
-        <ImageButton
-            android:id="@+id/playImageButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/play_icon"
-            android:clickable="true"
-            android:contentDescription="Play Icon"/>
-
-
-        <ImageButton
-            android:id="@+id/pauseImageButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/pause_icon"
-            android:onClick="onPauseButtonClick"
-            android:contentDescription="Pause Icon"/>
-
     </LinearLayout>
 
 </LinearLayout>

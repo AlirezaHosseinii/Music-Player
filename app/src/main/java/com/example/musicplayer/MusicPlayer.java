@@ -19,7 +19,9 @@ import java.security.Provider;
 
 public class MusicPlayer extends Service{
     private Context context;
-    public  MediaPlayer mediaPlayer;
+    public  static MediaPlayer mediaPlayer;
+    public static String currentSongFilePath;
+    private int currentPlaybackPosition = 0;
     private static final int NOTIFICATION_ID = 1;
     public MusicPlayer(Context context) {
         this.context = context;
@@ -38,9 +40,9 @@ public class MusicPlayer extends Service{
         System.out.println("clicked on play");
         if (intent != null && intent.getAction() != null) {
             if(intent.getAction().equals("PLAY")) {
-                String filePath = intent.getStringExtra("filePath");
-                playMusic(filePath);
-                startForeground(NOTIFICATION_ID, createNotification()); // Start as a foreground service
+                currentSongFilePath = intent.getStringExtra("filePath");
+                playMusic(currentSongFilePath);
+                startForeground(NOTIFICATION_ID, createNotification());
             }else if(intent.getAction().equals("PAUSE")){
                 System.out.println("here to stop");
                 pauseMusic();
@@ -61,6 +63,11 @@ public class MusicPlayer extends Service{
         try {
             mediaPlayer.setDataSource(filePath);
             mediaPlayer.prepare();
+
+            if (currentPlaybackPosition > 0) {
+                mediaPlayer.seekTo(currentPlaybackPosition);
+            }
+
             mediaPlayer.start();
         } catch (Exception e) {
             Toast.makeText(context, "Couldn't play the music. " + e.getLocalizedMessage() , Toast.LENGTH_SHORT).show();
@@ -94,6 +101,7 @@ public class MusicPlayer extends Service{
     public void pauseMusic(){
         try {
             if(mediaPlayer != null && mediaPlayer.isPlaying()){
+                currentPlaybackPosition = mediaPlayer.getCurrentPosition();
                 mediaPlayer.pause();
             }
         } catch (Exception e) {

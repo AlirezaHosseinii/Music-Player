@@ -3,29 +3,39 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".MainActivity">
 
-    <ListView
-        android:id="@+id/musicListView"
+    <androidx.appcompat.widget.AppCompatToggleButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"></androidx.appcompat.widget.AppCompatToggleButton>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:tabMode="fixed"
+        app:tabGravity="fill">
+    </com.google.android.material.tabs.TabLayout>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="16dp" />
+        android:layout_below="@id/tabLayout"/>
 
-    <Button
-        android:id="@+id/playPauseButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Play/Pause"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"/>
+    <!--
+  <FrameLayout
+      android:id="@+id/fragment_container"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_below="@id/tabLayout" />
 
-    <TextView
-        android:id="@+id/songTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:layout_above="@id/playPauseButton"
-        android:layout_marginTop="16dp"
-        android:layout_centerHorizontal="true"/>
+  <ListView
+      android:id="@+id/musicListView"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_marginBottom="16dp" />
+    -->
 
 </RelativeLayout>
