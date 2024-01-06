@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,14 +44,23 @@ public class SongsFragment extends Fragment {
     }
 
     private void fetchSongs() {
+        System.out.println("running");
         ContentResolver contentResolver = getActivity().getContentResolver();
+        System.out.println("running2");
+
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         String selection = MediaStore.Audio.Media.IS_MUSIC + "!= 0";
         String sortOrder = MediaStore.Audio.Media.TITLE + " ASC";
 
         Cursor cursor = contentResolver.query(uri, null, selection, null, sortOrder);
 
-        if (cursor != null && cursor.getCount() > 0) {
+        System.out.println("cursor: " + cursor == null);
+        System.out.println(cursor.getCount());
+        System.out.println("running3");
+        File file = new File("/storage/emulated/0/Audiobooks/sohrab.mp3");
+        System.out.println(file.exists());
+        if (cursor != null) {
+            System.out.println("here cursor");
             while (cursor.moveToNext()) {
                 int titleColumnIndex = cursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
                 int artistColumnIndex = cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
@@ -58,6 +68,7 @@ public class SongsFragment extends Fragment {
                 int dataColumnIndex = cursor.getColumnIndex(MediaStore.Audio.Media.DATA);
 
                 String title = cursor.getString(titleColumnIndex);
+                System.out.println(title);
                 String artist = cursor.getString(artistColumnIndex);
                 String filePath = cursor.getString(dataColumnIndex);
                 Long albumId = cursor.getLong(albumIdColumnIndex);

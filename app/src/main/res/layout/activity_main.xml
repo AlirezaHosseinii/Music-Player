@@ -6,10 +6,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".MainActivity">
 
-    <androidx.appcompat.widget.AppCompatToggleButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"></androidx.appcompat.widget.AppCompatToggleButton>
-
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
@@ -23,19 +19,5 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/tabLayout"/>
-
-    <!--
-  <FrameLayout
-      android:id="@+id/fragment_container"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:layout_below="@id/tabLayout" />
-
-  <ListView
-      android:id="@+id/musicListView"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:layout_marginBottom="16dp" />
-    -->
 
 </RelativeLayout>

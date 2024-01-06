@@ -13,12 +13,10 @@ public class CustomPagerAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        switch (position) {
-            case 1:
-                return new BlankFragment2();
-            default:
-                return new SongsFragment();
+        if (position == 1) {
+            return new BlankFragment2();
         }
+        return new SongsFragment();
     }
 
     @Override

@@ -1,21 +1,21 @@
 package com.example.musicplayer;
 
 public class Song {
-    private String title;
-    private String duration;
-    private String artist;
-    private String coverImageUrl;
+    private final String title;
+    private final String filePath;
+    private final String artist;
+    private final String coverImageUrl;
 
-    public Song(String title, String duration, String artist, String coverImageUrl) {
+    public Song(String title, String filePath, String artist, String coverImageUrl) {
         this.title = title;
-        this.duration = duration;
+        this.filePath = filePath;
         this.artist = artist;
         this.coverImageUrl = coverImageUrl;
     }
 
     public String getTitle() {return title;}
 
-    public String getDuration() {return duration;}
+    public String getFilePath() {return filePath;}
 
     public String getArtist() {return artist;}
 

@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,27 +34,31 @@ public class SongAdapter  extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int position = ((RecyclerView) parent).getChildAdapterPosition(v);
-                if (position != RecyclerView.NO_POSITION) {
-                    Song song = songs.get(position);
-                    String filePath = song.getDuration();
-                    Intent intent = new Intent(parent.getContext(), SongActivity.class);
+                try{
+                    int position = ((RecyclerView) parent).getChildAdapterPosition(v);
+                    if (position != RecyclerView.NO_POSITION) {
+                        Song song = songs.get(position);
+                        String filePath = song.getFilePath();
+                        Intent intent = new Intent(parent.getContext(), SongActivity.class);
 
-                    if(MusicPlayer.mediaPlayer != null &&
-                            MusicPlayer.mediaPlayer.isPlaying() && filePath.equals(MusicPlayer.currentSongFilePath)){
-                    }else{
-                        Intent playIntent = new Intent(v.getContext(), MusicPlayer.class);
-                        playIntent.setAction("PLAY");
+                        if(MusicPlayer.mediaPlayer != null &&
+                                MusicPlayer.mediaPlayer.isPlaying() && filePath.equals(MusicPlayer.currentSongFilePath)){
+                        }else{
+                            Intent playIntent = new Intent(v.getContext(), MusicPlayer.class);
+                            playIntent.setAction("PLAY");
 
-                        playIntent.putExtra("filePath", filePath);
-                        v.getContext().startService(playIntent);
+                            playIntent.putExtra("filePath", filePath);
+                            v.getContext().startService(playIntent);
+                        }
+
+                        intent.putExtra("songTitle", song.getTitle());
+                        intent.putExtra("songArtist", song.getArtist());
+                        intent.putExtra("coverImageUrl", song.getCoverImageUrl());
+                        intent.putExtra("filePath", song.getFilePath());
+                        parent.getContext().startActivity(intent);
                     }
-
-                    intent.putExtra("songTitle", song.getTitle());
-                    intent.putExtra("songArtist", song.getArtist());
-                    intent.putExtra("coverImageUrl", song.getCoverImageUrl());
-                    intent.putExtra("duration", song.getDuration());
-                    parent.getContext().startActivity(intent);
+                }catch (Exception e){
+                    Toast.makeText(musicPlayer.getApplicationContext(), "error: " + e.getLocalizedMessage(), Toast.LENGTH_SHORT);
                 }
             }
         });
@@ -79,7 +84,7 @@ public class SongAdapter  extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
             public void onClick(View v) {
                 Intent playIntent = new Intent(holder.itemView.getContext(), MusicPlayer.class);
                 playIntent.setAction("PLAY");
-                String filePath = song.getDuration();
+                String filePath = song.getFilePath();
                 playIntent.putExtra("filePath", filePath);
                 holder.itemView.getContext().startService(playIntent);
             }
