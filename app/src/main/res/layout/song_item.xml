@@ -2,6 +2,7 @@
 
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="100dp"
     android:paddingStart="16dp"
@@ -14,7 +15,7 @@
         android:layout_weight="0.2"
         android:layout_height="64dp"
         android:layout_marginEnd="20dp"
-        android:src="@drawable/default_image_cover"
+        app:srcCompat="@drawable/default_image_cover"
         android:scaleType="centerCrop"/>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -49,7 +50,7 @@
         android:layout_width="0dp"
         android:layout_weight="0.15"
         android:layout_height="64dp"
-        android:src="@drawable/play_icon"
+        app:srcCompat="@drawable/play_icon"
         android:layout_marginEnd="10dp"
         android:clickable="true"
         android:contentDescription="Play Icon"/>
@@ -60,7 +61,7 @@
         android:layout_width="0dp"
         android:layout_weight="0.15"
         android:layout_height="64dp"
-        android:src="@drawable/pause_icon"
+        app:srcCompat="@drawable/pause_icon"
         android:onClick="onPauseButtonClick"
         android:contentDescription="Pause Icon"/>
 </LinearLayout>

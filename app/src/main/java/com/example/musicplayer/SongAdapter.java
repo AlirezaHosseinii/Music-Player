@@ -18,11 +18,13 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 
 public class SongAdapter  extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
-    private List<Song> songs;
+    public static List<Song> songs;
     public MusicPlayer musicPlayer;
+    private Context context;
 
     public SongAdapter(List<Song> songs, Context context) {
         this.songs = songs;
+        this.context = context;
         musicPlayer = new MusicPlayer(context);
     }
 
@@ -58,7 +60,8 @@ public class SongAdapter  extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
                         parent.getContext().startActivity(intent);
                     }
                 }catch (Exception e){
-                    Toast.makeText(musicPlayer.getApplicationContext(), "error: " + e.getLocalizedMessage(), Toast.LENGTH_SHORT);
+                    System.out.println("Err: " + e.getLocalizedMessage());
+                    Toast.makeText(context, "error: " + e.getLocalizedMessage(), Toast.LENGTH_SHORT);
                 }
             }
         });

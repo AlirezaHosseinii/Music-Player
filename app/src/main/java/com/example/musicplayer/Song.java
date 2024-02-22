@@ -1,6 +1,11 @@
 package com.example.musicplayer;
 
-public class Song {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
+public class Song{
     private final String title;
     private final String filePath;
     private final String artist;
@@ -20,5 +25,6 @@ public class Song {
     public String getArtist() {return artist;}
 
     public String getCoverImageUrl() {return coverImageUrl;}
+
 }
 
