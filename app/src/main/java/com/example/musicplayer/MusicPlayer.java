@@ -1,14 +1,13 @@
 package com.example.musicplayer;
 
+import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,7 +15,10 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
 import android.media.MediaPlayer;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -33,6 +35,7 @@ import java.util.ArrayList;
 
 public class MusicPlayer extends Service {
     private Context context;
+    private Handler handler = new Handler();
     public static MediaPlayer mediaPlayer;
     public static String currentSongFilePath;
     private static String previousSongFilePath;
@@ -40,6 +43,8 @@ public class MusicPlayer extends Service {
     private static final int NOTIFICATION_ID = 1;
     private Song currentSong;
     private int currentSongIndex;
+    private NotificationCompat.Builder notificationBuilder;
+    private SeekBar songProgressSeekBar;
 
     public MusicPlayer(Context context) {
         this.context = context;
@@ -71,10 +76,9 @@ public class MusicPlayer extends Service {
                             System.out.println("ii" + i);
                         }
                     }
-
                     playMusic(currentSongFilePath);
-                    NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                    notificationManager.notify("tag", NOTIFICATION_ID, createNotification());
+                    startForeground(NOTIFICATION_ID, createNotification());
+
                 } else if (intent.getAction().equals("PAUSE")) {
                     pauseMusic();
                 } else if (intent.getAction().equals("NEXT")) {
@@ -112,7 +116,6 @@ public class MusicPlayer extends Service {
             currentPlaybackPosition = 0;
             playMusic(SongAdapter.songs.get(currentSongIndex).getFilePath());
         } else {
-            // Optional: Go to the last song if reached the beginning
             currentSongIndex = SongAdapter.songs.size() - 1;
             currentPlaybackPosition = 0;
             playMusic(SongAdapter.songs.get(currentSongIndex).getFilePath());
@@ -139,6 +142,7 @@ public class MusicPlayer extends Service {
                 }
             }
             mediaPlayer.start();
+
         } catch (Exception e) {
             Toast.makeText(context, "Couldn't play the music. " + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
         }
@@ -157,15 +161,16 @@ public class MusicPlayer extends Service {
             manager.createNotificationChannel(channel);
         }
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "CHANNEL_ID")
+        notificationBuilder = new NotificationCompat.Builder(this, "CHANNEL_ID")
                 .setContentTitle(currentSong.getTitle())
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setSmallIcon(R.drawable.default_image_cover)
+                .setSmallIcon(R.drawable.default_image_cover_notif)
                 .setContentText(currentSong.getArtist())
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setAutoCancel(true);
 
 
-        if(!coverImageUrl.isEmpty() && coverImageUrl != null){
+        if (!coverImageUrl.isEmpty() && coverImageUrl != null) {
             Glide.with(this)
                     .asBitmap()
                     .load(coverImageUrl)
@@ -173,22 +178,19 @@ public class MusicPlayer extends Service {
                         @Override
                         public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                             try {
-                                builder.setLargeIcon(resource);
+                                notificationBuilder.setLargeIcon(resource);
 
                                 NotificationCompat.BigPictureStyle bigPictureStyle = new NotificationCompat.BigPictureStyle()
                                         .bigPicture(resource)
                                         .bigLargeIcon((Icon) null);
 
-                                builder.setStyle(bigPictureStyle);
+                                notificationBuilder.setStyle(bigPictureStyle);
 
-                                // Notify
                                 if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                                     return;
                                 }
-                                NotificationManagerCompat.from(getApplicationContext()).notify(NOTIFICATION_ID, builder.build());
+                                NotificationManagerCompat.from(getApplicationContext()).notify(NOTIFICATION_ID, notificationBuilder.build());
                             } catch (Exception e) {
-                                // Log the exception details for debugging
-                                e.printStackTrace();
                             }
                         }
 
@@ -196,27 +198,46 @@ public class MusicPlayer extends Service {
                         public void onLoadCleared(@Nullable Drawable placeholder) {
                         }
                     });
-        }else{
+        } else {
             Bitmap defaultLargeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.default_image_cover);
-            builder.setLargeIcon(defaultLargeIcon);
-            NotificationManagerCompat.from(getApplicationContext()).notify(NOTIFICATION_ID, builder.build());
-
+            notificationBuilder.setLargeIcon(defaultLargeIcon);
         }
 
+        Intent mainIntent = new Intent(this, MainActivity.class);
+        mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent mainPendingIntent = PendingIntent.getActivity(this, 0,
+                mainIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        notificationBuilder.setContentIntent(mainPendingIntent);
 
         Intent pauseIntent = new Intent(this, MusicPlayer.class);
         pauseIntent.setAction("PAUSE");
         PendingIntent pausePendingIntent = PendingIntent.getService(this, 0, pauseIntent, PendingIntent.FLAG_IMMUTABLE);
-        builder.addAction(android.R.drawable.ic_media_pause, "Pause Music", pausePendingIntent);
+        notificationBuilder.addAction(android.R.drawable.ic_media_pause, "Pause Music", pausePendingIntent);
 
         Intent nextIntent = new Intent(this, MusicPlayer.class);
         nextIntent.setAction("NEXT");
         PendingIntent nextPendingIntent = PendingIntent.getService(this, 0, nextIntent, PendingIntent.FLAG_IMMUTABLE);
-        builder.addAction(android.R.drawable.btn_radio, "NEXT", nextPendingIntent);
+        notificationBuilder.addAction(android.R.drawable.btn_radio, "NEXT", nextPendingIntent);
 
 
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+                    System.out.println("hds");
+                    int totalDuration = mediaPlayer.getDuration();
+                    int currentPosition = mediaPlayer.getCurrentPosition();
+                    notificationBuilder.setProgress(totalDuration, currentPosition, false);
+                    if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    }
+                    NotificationManagerCompat.from(getApplicationContext()).notify(NOTIFICATION_ID, notificationBuilder.build());
+                    handler.postDelayed(this, 1000);
+                }
+            }
+        }, 1000);
 
-        return builder.build();
+        return notificationBuilder.build();
     }
 
     public void pauseMusic(){
